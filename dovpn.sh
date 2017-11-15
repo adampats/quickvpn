@@ -73,6 +73,10 @@ else
 	cp -v ./$ovpn_file "$target_dir/config.ovpn"
 fi
 
+echo "If you want an SSH tunnel, use autossh:"
+echo 'autossh -f -M 0 -o "ServerAliveInterval 30" -o "ServerAliveCountMax 3" ' \
+		 "-D 1337 root@$ip"
+
 echo "When finished, don't forget to kill the droplet with this command: "
 destroy_cmd="doctl compute droplet delete vpn-$timestamp"
 echo $destroy_cmd
