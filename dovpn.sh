@@ -10,7 +10,7 @@ ssh_key_path="$HOME/.ssh/digitalocean-personal"
 do_ssh_key_id='14681496'
 ssh_timeout=300
 tunnelblick_config_name='do-client'
-tunnelblick_config_dir="$HOME/Library/Application Support/Tunnelblick/Configurations/"
+tunnelblick_config_dir="$HOME/Library/Application Support/Tunnelblick/Configurations"
 
 echo -n "Checking for metadata file..."
 if [[ ! -f $user_data_file ]]; then
@@ -59,14 +59,18 @@ done
 echo ""
 
 echo "Inserting ovpn file to Tunnelblick directory..."
-if [[ ! -d $tunnelblick_config_dir ]]; then
+if [[ ! -d "$tunnelblick_config_dir" ]]; then
 	echo "Tunnelblick not found!  Please download it or install via brew: "
 	echo "https://www.tunnelblick.net/downloads.html"
 	echo "brew install caskroom/cask/tunnelblick"
 	echo "If you are using a different OpenVPN client, refer to ./do-client.ovpn ..."
 else
-	cp -v "./$ovpn_file" "$tunnelblick_config_dir/$tunnelblick_config_name.tlbk/" \
-		"Contents/Resources/config.ovpn"
+	target_dir="$tunnelblick_config_dir/$tunnelblick_config_name.tblk/Contents/Resources"
+	if [[ ! -d "$target_dir" ]]; then
+		echo "Creating config directory at $target_dir ..."
+		mkdir -p "$target_dir"
+	fi
+	cp -v ./$ovpn_file "$target_dir/config.ovpn"
 fi
 
 echo "When finished, don't forget to kill the droplet with this command: "
